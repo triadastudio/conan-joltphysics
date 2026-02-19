@@ -1,0 +1,163 @@
+name: conan-joltphysics CI
+
+on:
+  push:
+    branches: [ ci-test ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+    - name: Set git to use LF
+      run: |
+        git config --global core.autocrlf false
+        git config --global core.eol lf
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Install dependencies
+      run: |
+        python3 -m venv .venv
+        ./.venv/Scripts/activate
+        python3 -m pip install conan
+    - name: Config
+      env:
+        CONAN_PASSWORD: ${{ secrets.ARTIFACTORY_APIKEY }}
+      run: |
+        ./.venv/Scripts/activate
+        conan remote add triada ${{ secrets.ARTIFACTORY_URL }}
+        conan remote login triada ${{ secrets.ARTIFACTORY_USER }}
+    - name: Build
+      run: |
+        ./.venv/Scripts/activate
+        conan create . -pr:h profiles/windows.profile -pr:b profiles/windows.profile -b missing -s build_type=Debug
+        conan create . -pr:h profiles/windows.profile -pr:b profiles/windows.profile -b missing -s build_type=Release
+        conan create . -pr:h profiles/windows.profile -pr:b profiles/windows.profile -b missing -s build_type=RelWithDebInfo
+        conan create . -pr:h profiles/windows.profile -pr:b profiles/windows.profile -b missing -s build_type=MinSizeRel
+    - name: Upload
+      run: |
+        ./.venv/Scripts/activate
+        conan upload "joltphysics" -r triada -c
+
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Install dependencies
+      run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python3 -m pip install conan
+    - name: Config
+      env:
+        CONAN_PASSWORD: ${{ secrets.ARTIFACTORY_APIKEY }}
+      run: |
+        . .venv/bin/activate
+        conan remote add triada ${{ secrets.ARTIFACTORY_URL }}
+        conan remote login triada ${{ secrets.ARTIFACTORY_USER }}
+    - name: Build
+      run: |
+        . .venv/bin/activate
+        conan create . -pr:h profiles/linux.profile -pr:b profiles/linux.profile -b missing -s build_type=Debug
+        conan create . -pr:h profiles/linux.profile -pr:b profiles/linux.profile -b missing -s build_type=Release
+        conan create . -pr:h profiles/linux.profile -pr:b profiles/linux.profile -b missing -s build_type=RelWithDebInfo
+        conan create . -pr:h profiles/linux.profile -pr:b profiles/linux.profile -b missing -s build_type=MinSizeRel
+    - name: Upload
+      run: |
+        . .venv/bin/activate
+        conan upload "joltphysics" -r triada -c
+
+  macos:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Install dependencies
+      run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python3 -m pip install conan
+    - name: Config
+      env:
+        CONAN_PASSWORD: ${{ secrets.ARTIFACTORY_APIKEY }}
+      run: |
+        . .venv/bin/activate
+        conan remote add triada ${{ secrets.ARTIFACTORY_URL }}
+        conan remote login triada ${{ secrets.ARTIFACTORY_USER }}
+    - name: Build
+      run: |
+        . .venv/bin/activate
+        conan create . -pr:h profiles/macos.profile -pr:b profiles/macos.profile -b missing -s build_type=Debug
+        conan create . -pr:h profiles/macos.profile -pr:b profiles/macos.profile -b missing -s build_type=Release
+        conan create . -pr:h profiles/macos.profile -pr:b profiles/macos.profile -b missing -s build_type=RelWithDebInfo
+        conan create . -pr:h profiles/macos.profile -pr:b profiles/macos.profile -b missing -s build_type=MinSizeRel
+    - name: Upload
+      run: |
+        . .venv/bin/activate
+        conan upload "joltphysics" -r triada -c
+
+  macos-armv8:
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Install dependencies
+      run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python3 -m pip install conan
+    - name: Config
+      env:
+        CONAN_PASSWORD: ${{ secrets.ARTIFACTORY_APIKEY }}
+      run: |
+        . .venv/bin/activate
+        conan remote add triada ${{ secrets.ARTIFACTORY_URL }}
+        conan remote login triada ${{ secrets.ARTIFACTORY_USER }}
+    - name: Build
+      run: |
+        . .venv/bin/activate
+        conan create . -pr:h profiles/macos-armv8.profile -pr:b profiles/macos-armv8.profile -b missing -s build_type=Debug
+        conan create . -pr:h profiles/macos-armv8.profile -pr:b profiles/macos-armv8.profile -b missing -s build_type=Release
+        conan create . -pr:h profiles/macos-armv8.profile -pr:b profiles/macos-armv8.profile -b missing -s build_type=RelWithDebInfo
+        conan create . -pr:h profiles/macos-armv8.profile -pr:b profiles/macos-armv8.profile -b missing -s build_type=MinSizeRel
+    - name: Upload
+      run: |
+        . .venv/bin/activate
+        conan upload "joltphysics" -r triada -c
+
+  ios:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Install dependencies
+      run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
+        python3 -m pip install conan
+    - name: Config
+      env:
+        CONAN_PASSWORD: ${{ secrets.ARTIFACTORY_APIKEY }}
+      run: |
+        . .venv/bin/activate
+        conan remote add triada ${{ secrets.ARTIFACTORY_URL }}
+        conan remote login triada ${{ secrets.ARTIFACTORY_USER }}
+    - name: Build
+      run: |
+        . .venv/bin/activate
+        conan create . -pr:h profiles/ios.profile -pr:b profiles/macos.profile -b missing -s build_type=Debug -tf ""
+        conan create . -pr:h profiles/ios.profile -pr:b profiles/macos.profile -b missing -s build_type=Release -tf ""
+        conan create . -pr:h profiles/ios.profile -pr:b profiles/macos.profile -b missing -s build_type=RelWithDebInfo -tf ""
+        conan create . -pr:h profiles/ios.profile -pr:b profiles/macos.profile -b missing -s build_type=MinSizeRel -tf ""
+    - name: Upload
+      run: |
+        . .venv/bin/activate
+        conan upload "joltphysics" -r triada -c
+

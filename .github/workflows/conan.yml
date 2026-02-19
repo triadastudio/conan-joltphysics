@@ -72,7 +72,7 @@ jobs:
         conan upload "joltphysics" -r triada -c
 
   macos:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
       with:
@@ -132,7 +132,7 @@ jobs:
         conan upload "joltphysics" -r triada -c
 
   ios:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
     - uses: actions/checkout@v4
       with:

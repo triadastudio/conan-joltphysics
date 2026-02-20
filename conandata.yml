@@ -1,7 +1,7 @@
 sources:
-  "5.2.0":
+  "5.2.0b":
     url: "https://github.com/jrouwe/JoltPhysics/archive/refs/tags/v5.2.0.tar.gz"
     sha256: "f478afe3050c885e21403748e10ab18e3e8df8b0982c540e75f1e078ef8b2c88"
 patches:
-  "5.2.0":
+  "5.2.0b":
     - patch_file: "patches/001-workaround-clang13-macos.patch"

@@ -27,12 +27,14 @@ class JoltPhysicsConan(ConanFile):
         "fPIC": [True, False],
         "debug_renderer": [True, False],
         "profiler": [True, False],
+        "cross_platform_deterministic": [True, False],
     }
     default_options = {
         "shared": False,
         "fPIC": True,
         "debug_renderer": False,
         "profiler": False,
+        "cross_platform_deterministic": True,
     }
     implements = ["auto_shared_fpic"]
 
@@ -96,7 +98,7 @@ class JoltPhysicsConan(ConanFile):
         tc.cache_variables["TARGET_PERFORMANCE_TEST"] = False
         tc.cache_variables["TARGET_SAMPLES"] = False
         tc.cache_variables["TARGET_VIEWER"] = False
-        tc.cache_variables["CROSS_PLATFORM_DETERMINISTIC"] = False
+        tc.cache_variables["CROSS_PLATFORM_DETERMINISTIC"] = bool(self.options.cross_platform_deterministic)
         tc.cache_variables["INTERPROCEDURAL_OPTIMIZATION"] = False
         tc.cache_variables["GENERATE_DEBUG_SYMBOLS"] = False
         tc.cache_variables["ENABLE_ALL_WARNINGS"] = False
@@ -164,6 +166,9 @@ class JoltPhysicsConan(ConanFile):
 
         if self.options.profiler:
             self.cpp_info.defines.append("JPH_PROFILE_ENABLED")
+
+        if self.options.cross_platform_deterministic:
+            self.cpp_info.defines.append("JPH_CROSS_PLATFORM_DETERMINISTIC")
 
         # https://github.com/jrouwe/JoltPhysics/blob/v5.2.0/Build/CMakeLists.txt#L48
         # https://github.com/jrouwe/JoltPhysics/blob/v5.2.0/Jolt/Jolt.cmake#L554

@@ -109,6 +109,12 @@ class JoltPhysicsConan(ConanFile):
             bool(self.options.profiler)
         if is_msvc(self):
             tc.cache_variables["USE_STATIC_MSVC_RUNTIME_LIBRARY"] = is_msvc_static_runtime(self)
+
+        if is_msvc(self):
+            tc.extra_cxxflags.append("/fp:precise")
+        else:
+            tc.extra_cxxflags.extend(["-ffp-model=precise", "-ffp-contract=off"])
+
         tc.generate()
 
     def build(self):

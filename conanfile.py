@@ -156,8 +156,14 @@ class JoltPhysicsConan(ConanFile):
         if self.settings.arch in ["x86_64", "x86"]:
             self.cpp_info.defines.extend(["JPH_USE_SSE4_1", "JPH_USE_SSE4_2", "JPH_USE_LZCNT", "JPH_USE_TZCNT"])
 
+            if not is_msvc(self):
+                self.cpp_info.cxxflags.extend(["-msse4.1", "-msse4.2", "-mlzcnt", "-mbmi"])
+
             if not self.options.cross_platform_deterministic:
                 self.cpp_info.defines.extend(["JPH_USE_AVX2", "JPH_USE_AVX", "JPH_USE_F16C", "JPH_USE_FMADD"])
+
+                if not is_msvc(self):
+                    self.cpp_info.cxxflags.extend(["-mavx2", "-mavx", "-mf16c", "-mfma"])
 
         if is_msvc(self):
             # INFO: Floating point exceptions are enabled by default

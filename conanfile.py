@@ -80,7 +80,8 @@ class JoltPhysicsConan(ConanFile):
 
         # --- Build-type remapping for Jolt compatibility ---
         effective_bt = self._effective_build_type()
-        if str(self.settings.build_type) != effective_bt:
+        remapped = str(self.settings.build_type) != effective_bt
+        if remapped:
             # For single-config generators (Ninja, Unix Makefiles), override
             # CMAKE_BUILD_TYPE so CMake uses a configuration Jolt supports.
             tc.cache_variables["CMAKE_BUILD_TYPE"] = effective_bt
@@ -109,6 +110,17 @@ class JoltPhysicsConan(ConanFile):
             bool(self.options.profiler)
         if is_msvc(self):
             tc.cache_variables["USE_STATIC_MSVC_RUNTIME_LIBRARY"] = is_msvc_static_runtime(self)
+            if remapped:
+                # Conan's vs_runtime block sets CMAKE_MSVC_RUNTIME_LIBRARY to a generator
+                # expression keyed on settings.build_type (e.g. RelWithDebInfo). Because we
+                # compile under the *remapped* 'Release' config, that genexp never matches,
+                # evaluates to empty, and MSVC falls back to its static-runtime default --
+                # producing a /MT Jolt.lib that clashes with the dynamic-CRT graph (fmt etc).
+                # Drop Conan's per-config genexp and pin an absolute runtime that matches
+                # the requested compiler.runtime.
+                tc.blocks.remove("vs_runtime")
+                tc.cache_variables["CMAKE_MSVC_RUNTIME_LIBRARY"] = (
+                    "MultiThreaded" if is_msvc_static_runtime(self) else "MultiThreadedDLL")
 
         if is_msvc(self):
             tc.extra_cxxflags.append("/fp:precise")

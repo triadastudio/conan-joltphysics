@@ -18,7 +18,7 @@ class JoltPhysicsConan(ConanFile):
     topics = ("physics", "simulation", "physics-engine", "physics-simulation", "rigid-body", "game", "collision")
     homepage = "https://github.com/jrouwe/JoltPhysics"
     url = "https://github.com/triadastudio/conan-joltphysics"
-    version = "5.2.0b"
+    version = "5.5.0b"
 
     package_type = "library"
     settings = "os", "arch", "compiler", "build_type"

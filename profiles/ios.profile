@@ -7,6 +7,3 @@ compiler=apple-clang
 compiler.version=16
 compiler.libcxx=libc++
 compiler.cppstd=20
-
-[conf]
-tools.build:tools.apple:enable_bitcode=true
